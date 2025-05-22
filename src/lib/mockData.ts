@@ -1,4 +1,3 @@
-
 import { TicketIcon, TagIcon, TicketXIcon } from "lucide-react";
 
 export const mockCoupons = [
@@ -201,7 +200,10 @@ export const mockRecentActivity = [
     message: "Coupon redeemed",
     couponCode: "SUMMER25",
     time: "2 minutes ago",
-    user: "john.smith@example.com"
+    user: "john.smith@example.com",
+    amount: "$25.00",
+    module: "Gift Card",
+    bookingId: "BK-12345"
   },
   {
     id: "a2",
@@ -210,7 +212,9 @@ export const mockRecentActivity = [
     message: "New coupon created",
     couponCode: "EXTRA15",
     time: "1 hour ago",
-    user: "admin@example.com"
+    user: "admin@example.com",
+    module: "Enterprise",
+    emailStatus: "Sent"
   },
   {
     id: "a3",
@@ -219,7 +223,10 @@ export const mockRecentActivity = [
     message: "Coupon redeemed",
     couponCode: "WELCOME10",
     time: "2 hours ago",
-    user: "sophia.m@example.com"
+    user: "sophia.m@example.com",
+    amount: "$10.00",
+    module: "Gift Card",
+    bookingId: "BK-12346"
   },
   {
     id: "a4",
@@ -228,7 +235,8 @@ export const mockRecentActivity = [
     message: "Coupon expired",
     couponCode: "FLASH50",
     time: "5 hours ago",
-    user: "system"
+    user: "system",
+    module: "School"
   },
   {
     id: "a5",
@@ -237,7 +245,10 @@ export const mockRecentActivity = [
     message: "Coupon redeemed",
     couponCode: "WELCOME10",
     time: "6 hours ago",
-    user: "james.w@example.com"
+    user: "james.w@example.com",
+    amount: "$10.00",
+    module: "Individual",
+    bookingId: "BK-12347"
   },
   {
     id: "a6",
@@ -246,6 +257,9 @@ export const mockRecentActivity = [
     message: "Coupon redeemed",
     couponCode: "FREESHIP",
     time: "1 day ago",
-    user: "emma.j@example.com"
+    user: "emma.j@example.com",
+    amount: "$0.00",
+    module: "Gift Card",
+    bookingId: "BK-12348"
   },
 ];
