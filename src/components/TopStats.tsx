@@ -1,45 +1,47 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { TagIcon, TicketIcon, TicketCheckIcon, TicketXIcon } from "lucide-react";
+import { TagIcon, TicketCheckIcon, TicketXIcon, IndianRupee } from "lucide-react";
+import { mockCoupons } from "@/lib/mockData";
 
 export function TopStats() {
-  // In a real app, these would come from an API
+  const total = mockCoupons.length;
+  const used = mockCoupons.filter((c) => c.status === "Used").length;
+  const expired = mockCoupons.filter((c) => c.status === "Expired").length;
+  const totalValue = mockCoupons.reduce((s, c) => s + c.value, 0);
+  const totalUtilized = mockCoupons.reduce((s, c) => s + c.utilizedAmount, 0);
+  const utilizationRate = totalValue > 0 ? ((totalUtilized / totalValue) * 100).toFixed(1) : "0";
+
   const stats = [
     {
       title: "Total Coupons",
-      value: "128",
-      change: "+12%",
-      changeType: "positive",
+      value: total.toString(),
+      description: "All generated coupons",
       icon: TagIcon,
-      description: "Total generated coupons"
+      changeType: "positive" as const,
     },
     {
-      title: "Coupons Used",
-      value: "45",
-      percent: "35.2%",
-      change: "+5%",
-      changeType: "positive",
+      title: "Coupons Redeemed",
+      value: mockCoupons.filter((c) => c.redeemed).length.toString(),
+      percent: `${((mockCoupons.filter((c) => c.redeemed).length / total) * 100).toFixed(1)}%`,
+      description: "Partially or fully used",
       icon: TicketCheckIcon,
-      description: "Redeemed coupons"
+      changeType: "positive" as const,
     },
     {
       title: "Coupons Expired",
-      value: "34",
-      percent: "26.6%",
-      change: "+2",
-      changeType: "negative",
+      value: expired.toString(),
+      percent: `${((expired / total) * 100).toFixed(1)}%`,
+      description: "Expired coupons",
       icon: TicketXIcon,
-      description: "Expired without use"
+      changeType: "negative" as const,
     },
     {
       title: "Utilization Rate",
-      value: "$4,560",
-      percent: "62.4%",
-      change: "+18%",
-      changeType: "positive",
-      icon: TicketIcon,
-      description: "Total redeemed vs issued"
+      value: `₹${totalUtilized.toLocaleString("en-IN")}`,
+      percent: `${utilizationRate}%`,
+      description: `of ₹${totalValue.toLocaleString("en-IN")} issued`,
+      icon: IndianRupee,
+      changeType: "positive" as const,
     },
   ];
 
@@ -53,8 +55,8 @@ export function TopStats() {
                 <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
                 <p className="text-3xl font-bold">{stat.value}</p>
               </div>
-              <div className={`rounded-full p-2 ${stat.changeType === 'positive' ? 'bg-green-100' : 'bg-red-100'}`}>
-                <stat.icon className={`h-5 w-5 ${stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'}`} />
+              <div className={`rounded-full p-2 ${stat.changeType === "positive" ? "bg-green-100" : "bg-red-100"}`}>
+                <stat.icon className={`h-5 w-5 ${stat.changeType === "positive" ? "text-green-600" : "text-red-600"}`} />
               </div>
             </div>
             {stat.percent && (
@@ -64,14 +66,6 @@ export function TopStats() {
                   <span className="font-medium">{stat.percent}</span>
                 </div>
                 <Progress value={parseFloat(stat.percent)} className="h-1" />
-              </div>
-            )}
-            {!stat.percent && (
-              <div className="mt-2">
-                <span className={`text-xs font-medium ${stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'}`}>
-                  {stat.change}
-                </span>
-                <span className="text-xs text-muted-foreground ml-1">from last period</span>
               </div>
             )}
           </CardContent>

@@ -1,12 +1,9 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
 interface CreateCouponDialogProps {
@@ -15,44 +12,33 @@ interface CreateCouponDialogProps {
 }
 
 export function CreateCouponDialog({ open, onOpenChange }: CreateCouponDialogProps) {
-  const [couponData, setCouponData] = useState({
+  const [form, setForm] = useState({
     code: "",
-    description: "",
-    discountType: "percentage",
-    discountValue: "",
+    couponType: "Individual",
+    module: "1-on-1 Booking",
+    organizationName: "",
+    assignedTo: "",
+    assignedEmail: "",
+    assignedContact: "",
+    value: "",
     validUntil: "",
-    maxUses: "",
-    restrictions: "",
   });
 
   const handleChange = (field: string, value: string) => {
-    setCouponData((prev) => ({ ...prev, [field]: value }));
+    setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Basic validation
-    if (!couponData.code || !couponData.discountValue) {
+    if (!form.code || !form.value || !form.assignedTo) {
       toast.error("Please fill in all required fields");
       return;
     }
-
-    // In a real app, this would save the coupon to the database
-    console.log("Creating coupon:", couponData);
-    
-    // Show success message
-    toast.success("Coupon created successfully!");
-    
-    // Reset form and close dialog
-    setCouponData({
-      code: "",
-      description: "",
-      discountType: "percentage",
-      discountValue: "",
-      validUntil: "",
-      maxUses: "",
-      restrictions: "",
+    toast.success(`Coupon ${form.code} created successfully!`);
+    setForm({
+      code: "", couponType: "Individual", module: "1-on-1 Booking",
+      organizationName: "", assignedTo: "", assignedEmail: "",
+      assignedContact: "", value: "", validUntil: "",
     });
     onOpenChange(false);
   };
@@ -63,101 +49,65 @@ export function CreateCouponDialog({ open, onOpenChange }: CreateCouponDialogPro
         <DialogHeader>
           <DialogTitle>Create New Coupon</DialogTitle>
         </DialogHeader>
-        
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="code">Coupon Code</Label>
-            <Input
-              id="code"
-              value={couponData.code}
-              onChange={(e) => handleChange("code", e.target.value)}
-              placeholder="e.g., SUMMER2023"
-              className="uppercase"
-            />
+            <Label>Coupon Code *</Label>
+            <Input value={form.code} onChange={(e) => handleChange("code", e.target.value)} placeholder="e.g., POSITIVTYLOVABLE123" className="uppercase font-mono" />
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              value={couponData.description}
-              onChange={(e) => handleChange("description", e.target.value)}
-              placeholder="e.g., Summer sale promotion"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label>Discount Type</Label>
-            <RadioGroup
-              value={couponData.discountType}
-              onValueChange={(value) => handleChange("discountType", value)}
-              className="flex space-x-4"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="percentage" id="percentage" />
-                <Label htmlFor="percentage">Percentage</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="fixed" id="fixed" />
-                <Label htmlFor="fixed">Fixed Amount</Label>
-              </div>
-            </RadioGroup>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="discountValue">
-              {couponData.discountType === "percentage" ? "Discount Percentage" : "Discount Amount"}
-            </Label>
-            <div className="relative">
-              <Input
-                id="discountValue"
-                value={couponData.discountValue}
-                onChange={(e) => handleChange("discountValue", e.target.value)}
-                placeholder={couponData.discountType === "percentage" ? "e.g., 10" : "e.g., 25.00"}
-                type="number"
-                min="0"
-                step={couponData.discountType === "percentage" ? "1" : "0.01"}
-              />
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                {couponData.discountType === "percentage" ? "%" : "$"}
-              </div>
-            </div>
-          </div>
-          
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="validUntil">Valid Until</Label>
-              <Input
-                id="validUntil"
-                type="date"
-                value={couponData.validUntil}
-                onChange={(e) => handleChange("validUntil", e.target.value)}
-              />
+              <Label>Type</Label>
+              <Select value={form.couponType} onValueChange={(v) => handleChange("couponType", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Individual">Individual</SelectItem>
+                  <SelectItem value="Enterprise">Enterprise</SelectItem>
+                  <SelectItem value="School">School / College</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            
             <div className="space-y-2">
-              <Label htmlFor="maxUses">Max Uses</Label>
-              <Input
-                id="maxUses"
-                type="number"
-                value={couponData.maxUses}
-                onChange={(e) => handleChange("maxUses", e.target.value)}
-                placeholder="Leave empty for unlimited"
-                min="1"
-              />
+              <Label>Module</Label>
+              <Select value={form.module} onValueChange={(v) => handleChange("module", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1-on-1 Booking">1-on-1 Booking</SelectItem>
+                  <SelectItem value="Workshop">Workshop</SelectItem>
+                  <SelectItem value="Group Session">Group Session</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
-          
+          {form.couponType !== "Individual" && (
+            <div className="space-y-2">
+              <Label>Organization Name</Label>
+              <Input value={form.organizationName} onChange={(e) => handleChange("organizationName", e.target.value)} placeholder="e.g., Nestle India" />
+            </div>
+          )}
           <div className="space-y-2">
-            <Label htmlFor="restrictions">Restrictions (Optional)</Label>
-            <Textarea
-              id="restrictions"
-              value={couponData.restrictions}
-              onChange={(e) => handleChange("restrictions", e.target.value)}
-              placeholder="e.g., Minimum purchase of $50"
-            />
+            <Label>Assigned To *</Label>
+            <Input value={form.assignedTo} onChange={(e) => handleChange("assignedTo", e.target.value)} placeholder="Recipient name" />
           </div>
-          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Email</Label>
+              <Input type="email" value={form.assignedEmail} onChange={(e) => handleChange("assignedEmail", e.target.value)} placeholder="recipient@company.com" />
+            </div>
+            <div className="space-y-2">
+              <Label>Contact</Label>
+              <Input value={form.assignedContact} onChange={(e) => handleChange("assignedContact", e.target.value)} placeholder="+91 98765 43210" />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Coupon Value (₹) *</Label>
+              <Input type="number" min="100" value={form.value} onChange={(e) => handleChange("value", e.target.value)} placeholder="e.g., 20000" />
+            </div>
+            <div className="space-y-2">
+              <Label>Valid Until</Label>
+              <Input type="date" value={form.validUntil} onChange={(e) => handleChange("validUntil", e.target.value)} />
+            </div>
+          </div>
           <DialogFooter>
             <Button type="submit">Create Coupon</Button>
           </DialogFooter>
