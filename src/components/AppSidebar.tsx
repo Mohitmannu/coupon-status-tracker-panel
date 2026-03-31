@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   ListOrdered,
@@ -6,7 +6,6 @@ import {
   CalendarCheck,
   Bell,
   Menu,
-  X,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
