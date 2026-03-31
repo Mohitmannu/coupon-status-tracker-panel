@@ -5,7 +5,7 @@ import { mockCoupons } from "@/lib/mockData";
 
 export function TopStats() {
   const total = mockCoupons.length;
-  const used = mockCoupons.filter((c) => c.status === "Used").length;
+  const _used = mockCoupons.filter((c) => c.status === "Used").length;
   const expired = mockCoupons.filter((c) => c.status === "Expired").length;
   const totalValue = mockCoupons.reduce((s, c) => s + c.value, 0);
   const totalUtilized = mockCoupons.reduce((s, c) => s + c.utilizedAmount, 0);
