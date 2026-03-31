@@ -20,7 +20,7 @@ export function TopStats() {
       changeType: "positive" as const,
     },
     {
-      title: "Coupons Redeemed",
+      title: "Redeemed",
       value: mockCoupons.filter((c) => c.redeemed).length.toString(),
       percent: `${((mockCoupons.filter((c) => c.redeemed).length / total) * 100).toFixed(1)}%`,
       description: "Partially or fully used",
@@ -28,7 +28,7 @@ export function TopStats() {
       changeType: "positive" as const,
     },
     {
-      title: "Coupons Expired",
+      title: "Expired",
       value: expired.toString(),
       percent: `${((expired / total) * 100).toFixed(1)}%`,
       description: "Expired coupons",
@@ -36,34 +36,34 @@ export function TopStats() {
       changeType: "negative" as const,
     },
     {
-      title: "Utilization Rate",
+      title: "Utilization",
       value: `₹${totalUtilized.toLocaleString("en-IN")}`,
       percent: `${utilizationRate}%`,
-      description: `of ₹${totalValue.toLocaleString("en-IN")} issued`,
+      description: `of ₹${totalValue.toLocaleString("en-IN")}`,
       icon: IndianRupee,
       changeType: "positive" as const,
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
       {stats.map((stat) => (
         <Card key={stat.title}>
-          <CardContent className="p-6">
+          <CardContent className="p-3 md:p-6">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
-                <p className="text-3xl font-bold">{stat.value}</p>
+              <div className="min-w-0">
+                <p className="text-xs md:text-sm font-medium text-muted-foreground truncate">{stat.title}</p>
+                <p className="text-lg md:text-3xl font-bold truncate">{stat.value}</p>
               </div>
-              <div className={`rounded-full p-2 ${stat.changeType === "positive" ? "bg-green-100" : "bg-red-100"}`}>
-                <stat.icon className={`h-5 w-5 ${stat.changeType === "positive" ? "text-green-600" : "text-red-600"}`} />
+              <div className={`rounded-full p-1.5 md:p-2 shrink-0 ${stat.changeType === "positive" ? "bg-green-100" : "bg-red-100"}`}>
+                <stat.icon className={`h-4 w-4 md:h-5 md:w-5 ${stat.changeType === "positive" ? "text-green-600" : "text-red-600"}`} />
               </div>
             </div>
             {stat.percent && (
-              <div className="mt-3 space-y-1">
+              <div className="mt-2 md:mt-3 space-y-1">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">{stat.description}</span>
-                  <span className="font-medium">{stat.percent}</span>
+                  <span className="text-muted-foreground truncate">{stat.description}</span>
+                  <span className="font-medium shrink-0 ml-1">{stat.percent}</span>
                 </div>
                 <Progress value={parseFloat(stat.percent)} className="h-1" />
               </div>

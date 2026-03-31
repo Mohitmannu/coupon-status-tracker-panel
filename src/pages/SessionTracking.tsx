@@ -32,8 +32,8 @@ const SessionTracking = () => {
   const totalAmount = filtered.reduce((sum, b) => sum + b.amount, 0);
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Session Booking Tracking</h1>
+    <div className="p-4 md:p-6 space-y-6 pt-14 md:pt-6">
+      <h1 className="text-xl md:text-2xl font-bold">Session Booking Tracking</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
@@ -44,13 +44,13 @@ const SessionTracking = () => {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Total Amount Redeemed</p>
+            <p className="text-sm text-muted-foreground">Amount Redeemed</p>
             <p className="text-2xl font-bold">₹{totalAmount.toLocaleString("en-IN")}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">Completed Sessions</p>
+            <p className="text-sm text-muted-foreground">Completed</p>
             <p className="text-2xl font-bold">
               {filtered.filter((b) => b.status === "Completed").length}
             </p>
@@ -59,41 +59,42 @@ const SessionTracking = () => {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>All Coupon-Based Bookings</CardTitle>
-          <CardDescription>Sessions booked via coupon codes on the Positvity platform</CardDescription>
+        <CardHeader className="p-4 md:p-6">
+          <CardTitle className="text-base md:text-lg">All Coupon-Based Bookings</CardTitle>
+          <CardDescription>Sessions booked via coupon codes on Positvity</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4">
+        <CardContent className="space-y-4 p-2 md:p-6">
+          <div className="flex flex-col gap-3 px-2 md:px-0">
             <Input
-              placeholder="Search by booking ID, user, coupon, session..."
+              placeholder="Search by booking ID, user, coupon..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="sm:w-[300px]"
+              className="w-full sm:w-[300px]"
             />
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="sm:w-[180px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="Completed">Completed</SelectItem>
-                <SelectItem value="Confirmed">Confirmed</SelectItem>
-                <SelectItem value="Upcoming">Upcoming</SelectItem>
-                <SelectItem value="Cancelled">Cancelled</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="sm:w-[180px]">
-                <SelectValue placeholder="Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="1-on-1 Booking">1-on-1 Booking</SelectItem>
-                <SelectItem value="Workshop">Workshop</SelectItem>
-                <SelectItem value="Group Session">Group Session</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex flex-wrap gap-2">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full sm:w-[160px]">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="Completed">Completed</SelectItem>
+                  <SelectItem value="Confirmed">Confirmed</SelectItem>
+                  <SelectItem value="Upcoming">Upcoming</SelectItem>
+                  <SelectItem value="Cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="w-full sm:w-[160px]">
+                  <SelectValue placeholder="Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="1-on-1 Booking">1-on-1 Booking</SelectItem>
+                  <SelectItem value="Group Session">Group Session</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="rounded-md border overflow-x-auto">
@@ -102,11 +103,11 @@ const SessionTracking = () => {
                 <TableRow>
                   <TableHead>Booking ID</TableHead>
                   <TableHead>User</TableHead>
-                  <TableHead>Coupon Code</TableHead>
+                  <TableHead className="hidden sm:table-cell">Coupon</TableHead>
                   <TableHead>Amount</TableHead>
-                  <TableHead>Session Name</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Date & Time</TableHead>
+                  <TableHead className="hidden md:table-cell">Session</TableHead>
+                  <TableHead className="hidden lg:table-cell">Type</TableHead>
+                  <TableHead className="hidden md:table-cell">Date</TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
@@ -120,20 +121,20 @@ const SessionTracking = () => {
                 ) : (
                   filtered.map((booking) => (
                     <TableRow key={booking.id}>
-                      <TableCell className="font-mono font-medium">{booking.bookingId}</TableCell>
+                      <TableCell className="font-mono font-medium text-xs">{booking.bookingId}</TableCell>
                       <TableCell>
                         <div>
                           <p className="text-sm font-medium">{booking.user}</p>
-                          <p className="text-xs text-muted-foreground">{booking.userEmail}</p>
+                          <p className="text-xs text-muted-foreground hidden sm:block">{booking.userEmail}</p>
                         </div>
                       </TableCell>
-                      <TableCell className="font-mono text-xs">{booking.couponCode}</TableCell>
-                      <TableCell>₹{booking.amount.toLocaleString("en-IN")}</TableCell>
-                      <TableCell>{booking.sessionName}</TableCell>
-                      <TableCell>
+                      <TableCell className="hidden sm:table-cell font-mono text-xs">{booking.couponCode}</TableCell>
+                      <TableCell className="text-sm">₹{booking.amount.toLocaleString("en-IN")}</TableCell>
+                      <TableCell className="hidden md:table-cell text-sm">{booking.sessionName}</TableCell>
+                      <TableCell className="hidden lg:table-cell">
                         <Badge variant="outline" className="text-xs">{booking.sessionType}</Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden md:table-cell">
                         <div>
                           <p className="text-sm">{booking.bookingDate}</p>
                           <p className="text-xs text-muted-foreground">{booking.bookingTime}</p>
