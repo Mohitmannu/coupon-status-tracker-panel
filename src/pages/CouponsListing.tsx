@@ -8,18 +8,20 @@ const CouponsListing = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-6 pt-14 md:pt-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">All Coupons</h1>
-        <Button onClick={() => setShowCreateDialog(true)}>Create Coupon</Button>
+        <h1 className="text-xl md:text-2xl font-bold">All Coupons</h1>
+        <Button onClick={() => setShowCreateDialog(true)} size="sm" className="md:size-default">
+          Create Coupon
+        </Button>
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Coupon Management</CardTitle>
-          <CardDescription>Manage and track all coupon codes across Individual & B2B modules</CardDescription>
+        <CardHeader className="p-4 md:p-6">
+          <CardTitle className="text-base md:text-lg">Coupon Management</CardTitle>
+          <CardDescription>Manage and track all coupon codes</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-2 md:p-6">
           <CouponTable />
         </CardContent>
       </Card>

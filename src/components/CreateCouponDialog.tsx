@@ -14,12 +14,10 @@ interface CreateCouponDialogProps {
 export function CreateCouponDialog({ open, onOpenChange }: CreateCouponDialogProps) {
   const [form, setForm] = useState({
     code: "",
-    couponType: "Individual",
+    discountType: "fixed",
+    assignTo: "Individual",
     module: "1-on-1 Booking",
     organizationName: "",
-    assignedTo: "",
-    assignedEmail: "",
-    assignedContact: "",
     value: "",
     validUntil: "",
   });
@@ -30,39 +28,68 @@ export function CreateCouponDialog({ open, onOpenChange }: CreateCouponDialogPro
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.code || !form.value || !form.assignedTo) {
+    if (!form.code || !form.value) {
       toast.error("Please fill in all required fields");
       return;
     }
-    toast.success(`Coupon ${form.code} created successfully!`);
+    const label = form.discountType === "percentage" ? `${form.value}%` : `₹${form.value}`;
+    toast.success(`Coupon ${form.code} (${label}) created!`);
     setForm({
-      code: "", couponType: "Individual", module: "1-on-1 Booking",
-      organizationName: "", assignedTo: "", assignedEmail: "",
-      assignedContact: "", value: "", validUntil: "",
+      code: "", discountType: "fixed", assignTo: "Individual",
+      module: "1-on-1 Booking", organizationName: "", value: "", validUntil: "",
     });
     onOpenChange(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[480px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create New Coupon</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label>Coupon Code *</Label>
-            <Input value={form.code} onChange={(e) => handleChange("code", e.target.value)} placeholder="e.g., POSITIVTYLOVABLE123" className="uppercase font-mono" />
+            <Input
+              value={form.code}
+              onChange={(e) => handleChange("code", e.target.value)}
+              placeholder="e.g., POSITIVTYNESTLE2025"
+              className="uppercase font-mono"
+            />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Type</Label>
-              <Select value={form.couponType} onValueChange={(v) => handleChange("couponType", v)}>
+              <Label>Discount Type *</Label>
+              <Select value={form.discountType} onValueChange={(v) => handleChange("discountType", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="fixed">Fixed Amount (₹)</SelectItem>
+                  <SelectItem value="percentage">Percentage (%)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>{form.discountType === "percentage" ? "Discount (%)" : "Value (₹)"} *</Label>
+              <Input
+                type="number"
+                min={form.discountType === "percentage" ? "1" : "100"}
+                max={form.discountType === "percentage" ? "100" : undefined}
+                value={form.value}
+                onChange={(e) => handleChange("value", e.target.value)}
+                placeholder={form.discountType === "percentage" ? "e.g., 20" : "e.g., 20000"}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Assign To</Label>
+              <Select value={form.assignTo} onValueChange={(v) => handleChange("assignTo", v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Individual">Individual</SelectItem>
-                  <SelectItem value="Enterprise">Enterprise</SelectItem>
-                  <SelectItem value="School">School / College</SelectItem>
+                  <SelectItem value="Organization">Organization (B2B)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -72,44 +99,34 @@ export function CreateCouponDialog({ open, onOpenChange }: CreateCouponDialogPro
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="1-on-1 Booking">1-on-1 Booking</SelectItem>
-                  <SelectItem value="Workshop">Workshop</SelectItem>
                   <SelectItem value="Group Session">Group Session</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
-          {form.couponType !== "Individual" && (
+
+          {form.assignTo === "Organization" && (
             <div className="space-y-2">
               <Label>Organization Name</Label>
-              <Input value={form.organizationName} onChange={(e) => handleChange("organizationName", e.target.value)} placeholder="e.g., Nestle India" />
+              <Input
+                value={form.organizationName}
+                onChange={(e) => handleChange("organizationName", e.target.value)}
+                placeholder="e.g., Nestle India"
+              />
             </div>
           )}
+
           <div className="space-y-2">
-            <Label>Assigned To *</Label>
-            <Input value={form.assignedTo} onChange={(e) => handleChange("assignedTo", e.target.value)} placeholder="Recipient name" />
+            <Label>Valid Until</Label>
+            <Input
+              type="date"
+              value={form.validUntil}
+              onChange={(e) => handleChange("validUntil", e.target.value)}
+            />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Email</Label>
-              <Input type="email" value={form.assignedEmail} onChange={(e) => handleChange("assignedEmail", e.target.value)} placeholder="recipient@company.com" />
-            </div>
-            <div className="space-y-2">
-              <Label>Contact</Label>
-              <Input value={form.assignedContact} onChange={(e) => handleChange("assignedContact", e.target.value)} placeholder="+91 98765 43210" />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Coupon Value (₹) *</Label>
-              <Input type="number" min="100" value={form.value} onChange={(e) => handleChange("value", e.target.value)} placeholder="e.g., 20000" />
-            </div>
-            <div className="space-y-2">
-              <Label>Valid Until</Label>
-              <Input type="date" value={form.validUntil} onChange={(e) => handleChange("validUntil", e.target.value)} />
-            </div>
-          </div>
+
           <DialogFooter>
-            <Button type="submit">Create Coupon</Button>
+            <Button type="submit" className="w-full sm:w-auto">Create Coupon</Button>
           </DialogFooter>
         </form>
       </DialogContent>

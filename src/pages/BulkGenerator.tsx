@@ -20,12 +20,12 @@ interface GeneratedCoupon {
 
 const BulkGenerator = () => {
   const [form, setForm] = useState({
-    couponType: "Enterprise",
     organizationName: "",
-    contactEmail: "",
     numberOfCoupons: "",
+    discountType: "fixed",
     amountPerCoupon: "",
     validityMonths: "6",
+    module: "1-on-1 Booking",
     autoSendEmail: false,
   });
   const [generatedCoupons, setGeneratedCoupons] = useState<GeneratedCoupon[]>([]);
@@ -74,30 +74,19 @@ const BulkGenerator = () => {
     }
   };
 
+  const valueLabel = form.discountType === "percentage" ? "Discount per Coupon (%)" : "Amount per Coupon (₹)";
+
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Bulk Coupon Generator</h1>
+    <div className="p-4 md:p-6 space-y-6 pt-14 md:pt-6">
+      <h1 className="text-xl md:text-2xl font-bold">Bulk Coupon Generator</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
-          <CardHeader>
-            <CardTitle>Generate Coupons</CardTitle>
-            <CardDescription>Create multiple coupons for B2B clients at once</CardDescription>
+          <CardHeader className="p-4 md:p-6">
+            <CardTitle className="text-base md:text-lg">Generate Coupons</CardTitle>
+            <CardDescription>Create multiple coupons for B2B clients</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Coupon Type</Label>
-              <Select value={form.couponType} onValueChange={(v) => handleChange("couponType", v)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Enterprise">Enterprise</SelectItem>
-                  <SelectItem value="School">School / College</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
+          <CardContent className="space-y-4 p-4 md:p-6">
             <div className="space-y-2">
               <Label>Organization Name *</Label>
               <Input
@@ -107,17 +96,30 @@ const BulkGenerator = () => {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label>Contact Email (optional)</Label>
-              <Input
-                type="email"
-                placeholder="e.g., hr@nestle.com"
-                value={form.contactEmail}
-                onChange={(e) => handleChange("contactEmail", e.target.value)}
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Discount Type</Label>
+                <Select value={form.discountType} onValueChange={(v) => handleChange("discountType", v)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fixed">Fixed Amount (₹)</SelectItem>
+                    <SelectItem value="percentage">Percentage (%)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Module</Label>
+                <Select value={form.module} onValueChange={(v) => handleChange("module", v)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1-on-1 Booking">1-on-1 Booking</SelectItem>
+                    <SelectItem value="Group Session">Group Session</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Number of Coupons *</Label>
                 <Input
@@ -129,11 +131,11 @@ const BulkGenerator = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Amount per Coupon (₹) *</Label>
+                <Label>{valueLabel} *</Label>
                 <Input
                   type="number"
-                  min="100"
-                  placeholder="e.g., 5000"
+                  min="1"
+                  placeholder={form.discountType === "percentage" ? "e.g., 20" : "e.g., 5000"}
                   value={form.amountPerCoupon}
                   onChange={(e) => handleChange("amountPerCoupon", e.target.value)}
                 />
@@ -143,9 +145,7 @@ const BulkGenerator = () => {
             <div className="space-y-2">
               <Label>Validity Period</Label>
               <Select value={form.validityMonths} onValueChange={(v) => handleChange("validityMonths", v)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="1">1 Month</SelectItem>
                   <SelectItem value="3">3 Months</SelectItem>
@@ -157,7 +157,7 @@ const BulkGenerator = () => {
 
             <div className="flex items-center justify-between p-3 border rounded-lg">
               <div>
-                <Label>Auto-send to Contact</Label>
+                <Label>Auto-send Email</Label>
                 <p className="text-xs text-muted-foreground">Send coupon details via email</p>
               </div>
               <Switch
@@ -174,15 +174,15 @@ const BulkGenerator = () => {
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>CSV Upload</CardTitle>
-            <CardDescription>Upload recipient details for bulk email distribution</CardDescription>
+          <CardHeader className="p-4 md:p-6">
+            <CardTitle className="text-base md:text-lg">CSV Upload</CardTitle>
+            <CardDescription>Upload recipient details for bulk distribution</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
-              <Upload className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
+          <CardContent className="space-y-4 p-4 md:p-6">
+            <div className="border-2 border-dashed border-border rounded-lg p-6 md:p-8 text-center">
+              <Upload className="h-8 w-8 md:h-10 md:w-10 mx-auto text-muted-foreground mb-3" />
               <p className="text-sm text-muted-foreground mb-3">
-                Upload an Excel/CSV file with recipient details
+                Upload CSV/Excel with recipient details
               </p>
               <Input
                 type="file"
@@ -198,11 +198,10 @@ const BulkGenerator = () => {
             </div>
 
             <div className="space-y-2">
-              <p className="text-sm font-medium">CSV Format Expected:</p>
-              <div className="bg-muted rounded-md p-3 text-xs font-mono">
+              <p className="text-sm font-medium">CSV Format:</p>
+              <div className="bg-muted rounded-md p-3 text-xs font-mono overflow-x-auto">
                 <p>Name, Email, Contact, Amount</p>
                 <p>Rahul Mehta, rahul@nestle.com, +91 98765 43210, 5000</p>
-                <p>Sunita Rao, sunita@nestle.com, +91 87654 32109, 5000</p>
               </div>
             </div>
 
@@ -216,22 +215,22 @@ const BulkGenerator = () => {
 
       {generatedCoupons.length > 0 && (
         <Card>
-          <CardHeader>
-            <CardTitle>Generated Coupons ({generatedCoupons.length})</CardTitle>
+          <CardHeader className="p-4 md:p-6">
+            <CardTitle className="text-base md:text-lg">Generated Coupons ({generatedCoupons.length})</CardTitle>
             <CardDescription>
               Total Value: ₹{(generatedCoupons.reduce((sum, c) => sum + c.amount, 0)).toLocaleString("en-IN")}
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-2 md:p-6">
             <div className="rounded-md border overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>#</TableHead>
                     <TableHead>Coupon Code</TableHead>
-                    <TableHead>Organization</TableHead>
+                    <TableHead className="hidden sm:table-cell">Organization</TableHead>
                     <TableHead>Amount</TableHead>
-                    <TableHead>Valid Until</TableHead>
+                    <TableHead className="hidden sm:table-cell">Valid Until</TableHead>
                     <TableHead>Status</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -239,10 +238,10 @@ const BulkGenerator = () => {
                   {generatedCoupons.map((coupon, i) => (
                     <TableRow key={i}>
                       <TableCell>{i + 1}</TableCell>
-                      <TableCell className="font-mono font-medium">{coupon.code}</TableCell>
-                      <TableCell>{coupon.organization}</TableCell>
+                      <TableCell className="font-mono font-medium text-xs">{coupon.code}</TableCell>
+                      <TableCell className="hidden sm:table-cell">{coupon.organization}</TableCell>
                       <TableCell>₹{coupon.amount.toLocaleString("en-IN")}</TableCell>
-                      <TableCell>{coupon.validUntil}</TableCell>
+                      <TableCell className="hidden sm:table-cell">{coupon.validUntil}</TableCell>
                       <TableCell>
                         <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                           {coupon.status}

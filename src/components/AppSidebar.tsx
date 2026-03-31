@@ -1,15 +1,17 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   ListOrdered,
   PackagePlus,
   CalendarCheck,
   Bell,
-  ChevronLeft,
-  ChevronRight,
+  Menu,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/" },
@@ -19,36 +21,20 @@ const navItems = [
   { label: "Notifications", icon: Bell, path: "/notifications" },
 ];
 
-export function AppSidebar() {
-  const [collapsed, setCollapsed] = useState(false);
-  const location = useLocation();
-
+function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
   return (
-    <aside
-      className={cn(
-        "h-screen sticky top-0 bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300",
-        collapsed ? "w-16" : "w-60"
-      )}
-    >
-      <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
-        {!collapsed && (
-          <span className="text-lg font-bold text-sidebar-foreground tracking-tight">
-            Positvity
-          </span>
-        )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="p-1 rounded-md hover:bg-sidebar-accent text-sidebar-foreground"
-        >
-          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-        </button>
+    <>
+      <div className="flex items-center p-4 border-b border-sidebar-border">
+        <span className="text-lg font-bold text-sidebar-foreground tracking-tight">
+          Positvity
+        </span>
       </div>
-
       <nav className="flex-1 py-4 space-y-1 px-2">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
+            onClick={onNavClick}
             className={({ isActive }) =>
               cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
@@ -59,16 +45,43 @@ export function AppSidebar() {
             }
           >
             <item.icon className="h-5 w-5 shrink-0" />
-            {!collapsed && <span>{item.label}</span>}
+            <span>{item.label}</span>
           </NavLink>
         ))}
       </nav>
-
       <div className="p-4 border-t border-sidebar-border">
-        {!collapsed && (
-          <p className="text-xs text-muted-foreground">Coupon Admin Panel v1.0</p>
-        )}
+        <p className="text-xs text-muted-foreground">Coupon Admin Panel v1.0</p>
       </div>
+    </>
+  );
+}
+
+export function AppSidebar() {
+  const isMobile = useIsMobile();
+  const [open, setOpen] = useState(false);
+
+  if (isMobile) {
+    return (
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="fixed top-3 left-3 z-50 bg-background/80 backdrop-blur-sm border shadow-sm"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="w-60 p-0 bg-sidebar flex flex-col">
+          <SidebarContent onNavClick={() => setOpen(false)} />
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  return (
+    <aside className="h-screen sticky top-0 bg-sidebar border-r border-sidebar-border flex flex-col w-60">
+      <SidebarContent />
     </aside>
   );
 }
